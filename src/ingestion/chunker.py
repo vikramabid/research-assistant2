@@ -1,6 +1,6 @@
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
-
+from src.logger.logger import logger
 
 def chunk_documents(
     documents: list[Document],
@@ -24,5 +24,5 @@ def chunk_documents(
     )
 
     chunks = splitter.split_documents(documents)
-
+    logger.info(f"Created {len(chunks)} chunks")
     return chunks
