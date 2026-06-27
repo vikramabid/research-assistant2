@@ -1,3 +1,5 @@
+from uvicorn import Config
+
 from src.prompts.rag_prompt import RAG_PROMPT
 from src.chat.memory import get_chat_history
 from src.query_rewriter.rewriter import QueryRewriter
@@ -20,13 +22,13 @@ class RAGChain:
         # Retrieve documents
         docs = self.retriever.invoke(
             rewritten_question,
-            k=15
+            Config.RETRIEVAL_K
         )
 
         docs = self.reranker.rerank(
             rewritten_question,
             docs,
-            top_k=5
+            Config.TOP_K
         )
 
         # Convert to context

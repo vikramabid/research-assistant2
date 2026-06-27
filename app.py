@@ -22,7 +22,9 @@ from src.chat.memory import (
     add_user_message,
     add_ai_message,
 )
+from src.config import Config
 
+Config.validate()
 # ---------------- Streamlit Config ---------------- #
 
 st.set_page_config(
