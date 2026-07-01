@@ -1,5 +1,4 @@
-from uvicorn import Config
-
+from src.config import Config
 from src.prompts.rag_prompt import RAG_PROMPT
 from src.chat.memory import get_chat_history
 from src.query_rewriter.rewriter import QueryRewriter
@@ -19,12 +18,20 @@ class RAGChain:
 
     def invoke(self, question):
         logger.info(f"Question: {question}")
+        
+        # Get chat history and rewrite question
+        history = get_chat_history()
+        rewritten_question = self.rewriter.rewrite(
+            history,
+            question
+        )
+        
         # Retrieve documents
         docs = self.retriever.invoke(
-            rewritten_question,
-            Config.RETRIEVAL_K
+            rewritten_question
         )
 
+        # Rerank documents
         docs = self.reranker.rerank(
             rewritten_question,
             docs,
@@ -33,15 +40,7 @@ class RAGChain:
 
         # Convert to context
         context = format_docs(docs)
-        history = get_chat_history()
-        rewritten_question = self.rewriter.rewrite(
-            history,
-            question
-        )
-
-        docs = self.retriever.invoke(
-            rewritten_question
-        )
+        
         # Build prompt
         prompt = RAG_PROMPT.invoke(
     {
